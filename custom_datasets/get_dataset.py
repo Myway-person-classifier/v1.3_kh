@@ -4,8 +4,8 @@ import os
 from sklearn.model_selection import KFold
 import tempfile
 
-from datasets.text_dataset import TextDataset
-from datasets.text_collator import TextCollator
+from custom_datasets.text_dataset import TextDataset
+from custom_datasets.text_collator import TextCollator
 
 def get_dataset(args, tokenizer):
     """
