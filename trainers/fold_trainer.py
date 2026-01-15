@@ -52,13 +52,12 @@ class FoldTrainer:
             logging_steps=self.args.logging_steps,
             save_strategy="epoch",
             
-            # [수정] 최신 Transformer 대응
             eval_strategy="epoch",
+            load_best_model_at_end=False,  # <--- True에서 False로 무조건 변경!
+            metric_for_best_model=None,     # <--- 이 줄이 있다면 None으로 하거나 삭제
+            save_total_limit=1,
             
-            save_total_limit=2,
-            
-            # [수정] NaN 방지 (안정성 우선)
-            fp16=False, 
+            fp16=torch.cuda.is_available(),
             
             dataloader_num_workers=0,
             report_to="none",

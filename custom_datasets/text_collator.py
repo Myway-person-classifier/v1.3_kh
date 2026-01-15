@@ -1,5 +1,6 @@
 import torch 
 import torch.nn as nn
+import random
 
 class TextCollator:
     def __init__(self, args, tokenizer):
@@ -27,8 +28,8 @@ class TextCollator:
             "label": label            
         }        
         """        
-        self.is_first_init = True        
-        
+        self.is_first_init = True  
+
     def __call__(self, batch):
         item = {}
         
@@ -86,8 +87,23 @@ class TextCollator:
         elif self.args.use_paragraph:
             # 1) batch 안의 모든 문단 리스트를 꺼내고
             paragraph_texts = [x['paragraph_text'] for x in batch]  # List[List[str]]
+            
+            # [수정 포인트] 학습 시에만 문단 순서 섞기 (Data Augmentation)
+            # 보통 학습 시에는 labels가 존재하고, 제출(is_submission) 모드가 아닙니다.
+            if labels is not None and not getattr(self.args, 'is_submission', False):
+                new_paragraph_texts = []
+                for paras in paragraph_texts:
+                    p_copy = paras[:] # 원본 훼손 방지를 위해 복사
+                    random.shuffle(p_copy)
+                    new_paragraph_texts.append(p_copy)
+                paragraph_texts = new_paragraph_texts
+                # print("DEBUG: Paragraphs Shuffled for Training") # 확인용
+            
             # (옵션) paragraph_index 도 똑같이
             paragraph_idxs  = [x['paragraph_index'] for x in batch] # List[List[int]]
+            
+            # 2) flatten 해서 한 번에 토크나이징 (이후 로직 동일)
+            flat_paras = [p for paras in paragraph_texts for p in paras]
             
             # 2) flatten 해서 한 번에 토크나이징
             flat_paras = [p for paras in paragraph_texts for p in paras]

@@ -52,7 +52,7 @@ def get_arguments():
     parser.add_argument('--num_layers', type=int, default=4, help='Number of attention heads in the model')
     parser.add_argument('--dim_feedforward', type=int, default=2048, help='Number of attention heads in the model')
     parser.add_argument('--hidden_size', type=int, default=512, help='Number of attention heads in the model')
-    parser.add_argument('--dropout', type=int, default=0., help='Number of attention heads in the model')
+    parser.add_argument('--dropout', type=float, default=0.2, help='Number of attention heads in the model')
     
     # AIGT Model arguments (InfoNCE Loss)
     parser.add_argument('--use_infonce_loss', type=bool, default=False, 

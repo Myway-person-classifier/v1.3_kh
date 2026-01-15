@@ -66,5 +66,13 @@ class HybridTrainer(Trainer):
         logits = total_logits.view(-1)
         
         if return_outputs:
-            return total_loss, logits, label
+            # Trainer가 기대하는 형식은 오직 (loss, outputs) 입니다.
+            # outputs는 모델이 뱉은 원본이나 딕셔너리 형태여야 합니다.
+            # 여기서 outputs에 loss를 포함시켜주면 확실하게 인식합니다.
+            if isinstance(outputs, dict):
+                outputs["loss"] = total_loss
+            else:
+                # 튜플인 경우 유연하게 대응
+                outputs = (total_loss,) + outputs if isinstance(outputs, tuple) else outputs
+            return (total_loss, outputs)       
         return total_loss
